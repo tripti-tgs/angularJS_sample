@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+  <head>
+    <meta charset="utf-8" />
+    <title>AngularJS App</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/angular-ui-grid/ui-grid.min.css"
+    />
+  </head>
+  <body>
+    <!-- 🌐 Navbar -->
+    <nav
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      ng-controller="NavbarController"
+    >
+      <a class="navbar-brand" href="#!/">{{ appTitle }}</a>
+      <!-- uses $rootScope -->
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item"><a class="nav-link" href="#!/">Home</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="#!/users">Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#!/grid">grid</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#!/user-form">Add User</a>
+          </li>
+
+          <li class="nav-item">
+            <span ng-if="selectedUserId">ID: {{ selectedUserId }}</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- 🔄 View Container -->
+    <div class="container mt-4" ng-controller="IndexController">
+      <button ng-click="broadcastMessage()">Broadcast</button>
+      <div ng-view></div>
+    </div>
+    <!-- Scripts -->
+    <script src="/angular/angular.js"></script>
+    <script src="/angular-route/angular-route.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/angular-ui-grid/ui-grid.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="directive/button.js"></script>
+    <script src="controllers/HomeController.js"></script>
+    <script src="controllers/UserListController.js"></script>
+    <script src="controllers/NavbarController.js"></script>
+    <script src="controllers/IndexController.js"></script>
+    <script src="controllers/GridController.js"></script>
+    <script src="controllers/UserFormController.js"></script>
+
+    <!-- App Code -->
+    <script src="controllers/UserDetailController.js"></script>
+  </body>
+</html>

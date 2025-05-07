@@ -1,0 +1,191 @@
+/* Add custom CSS for your buttons */
+.grid-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0 5px;
+}
+
+.view-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.edit-btn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.grid-btn:hover {
+  opacity: 0.8;
+}
+
+.grid-btn:focus {
+  outline: none;
+}
+
+
+/* Modal backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1040;
+  }
+  
+  /* Custom modal container */
+  .custom-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 80%;
+    width: 800px;
+    background-color: #fff;
+    z-index: 1050;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Modal content */
+  .modal-content {
+    border-radius: 10px;
+    padding: 10px;
+  }
+  
+  /* Modal header */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  /* Modal body */
+  .modal-body {
+    padding: 10px;
+  }
+  
+  /* User detail section */
+  .modal-body p {
+    font-size: 1rem;
+    line-height: 1;
+  }
+  
+  strong {
+    font-weight: bold;
+  }
+  
+  /* Layout styling for the columns */
+  .row {
+    margin-bottom: 5px;
+  }
+  
+  /* User photo styling */
+  .user-photo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    margin-top: 10px;
+  }
+  
+  /* Modal close button */
+  
+  /* Modal responsive design */
+  @media (max-width: 768px) {
+    .custom-modal {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .modal-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .modal-title {
+      margin-bottom: 10px;
+    }
+  }
+  .custom-modalConfirmation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-contentConfirmation {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .modal-headerConfirmation, .modal-footerConfirmation {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+  }
+  
+  .close-btnConfirmation {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .btn {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .btn-danger {
+    background-color: red;
+    color: white;
+  }
+  
+  .btn-secondary {
+    background-color: gray;
+    color: white;
+  }
+ 
+  /* Change height and font-size of the pagination dropdown */
+.ui-grid-pager-row-count-picker select {
+  height: 28px !important;         /* Set your desired height */
+
+  padding: 2px 10px;    /* Optional: padding for better appearance */
+}

@@ -1,0 +1,20 @@
+<h2>User List</h2>
+<input type="text" ng-model="searchText" placeholder="Search users..." />
+
+<!-- <my-button button-text="Click Me!" button-color="green"></my-button> -->
+<ul>
+  <!-- <li ng-repeat="user in users | minLength:50| filter:searchText"> -->
+
+    <li ng-repeat="user in users | minLength:50 | customSearch:searchText">
+      <br/>
+      <my-button button-text="Click Me!" user=user userID="selectButtonUser(user)" button-color="green"></my-button>
+    <!-- <button ng-click="selectUser(user)">send ID</button> -->
+    <br />
+    <a href="#!/users/{{ user.id }}">Id: {{ user.id }}</a>
+    <br />
+    Original Title: {{ user.title }} <br />
+    Lower Title: {{ user.title | lowercase }} <br />
+    Upper Title: {{ user.title | uppercase }} <br />
+    Body: {{ user.body }}
+  </li>
+</ul>

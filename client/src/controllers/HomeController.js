@@ -340,13 +340,14 @@ angular
       url.then(
         function (response) {
           $scope.$emit("childToParentrecordData", { data: $scope.addUser });
-
-          $scope.messageAlert = response.data;
+          alert(response.data.message);
+          // $scope.messageAlert = response.data;
           $scope.closeModal();
         },
         function (error) {
           console.log(error);
-          $scope.messageAlert = error.data;
+          alert(error.data.error);
+          // $scope.messageAlert = error.data;
         }
       );
     };

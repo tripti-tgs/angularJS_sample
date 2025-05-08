@@ -226,3 +226,14 @@ strong {
 /* .form_space_2{
   margin-right: -4px
 } */
+
+.ui-grid-filter-input {
+  /* //border: none !important;         Remove all borders */
+  border-bottom: 1px solid #ccc;   /* Add only bottom border */
+  border-radius: 0;                /* Optional: remove any border radius */
+  padding: 4px 6px;                /* Optional: adjust spacing */
+  outline: none;                   /* Optional: remove focus outline */
+}
+.ui-grid-filter-input:focus {
+  border-bottom: 2px solid #007bff !important; /* Blue bottom border on focus */
+}

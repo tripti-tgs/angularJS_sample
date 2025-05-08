@@ -40,7 +40,7 @@ angular
             // cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row) + 1}}</div>',
             width: 80,
           },
-          { name: "FirstName" },
+          { name: "FirstName", headerCellClass: "custom-filter-header" },
           { name: "LastName" },
           { name: "Country" },
           { name: "State" },
@@ -227,7 +227,7 @@ angular
       $scope.imageUrl = "images/no-image-available.webp";
       $scope.OriginalimageUrl = null;
       $scope.originalUser = null;
-      $scope.addUser.Photo = null;
+
       $scope.states = [];
       $scope.cities = [];
 
@@ -280,6 +280,7 @@ angular
 
       // Initialize addUser object
       if ($scope?.editUser?.Id) {
+        console.log($scope?.editUser);
         $scope.emailMsgExists = false;
 
         // Convert editUser to addUser with necessary transformations
@@ -320,7 +321,6 @@ angular
           $scope.addUser.State = selectedState?.id;
 
           const stateId = selectedState?.id;
-          console.log(countryId, stateId);
           $scope.setCities(countryId, stateId);
         }
         if ($scope?.addUser?.City) {
@@ -332,6 +332,7 @@ angular
         }
         $scope.originalUser = angular.copy($scope.addUser);
       } else {
+        $scope.addUser.Photo = null;
         $scope.OriginalimageUrl = $scope.imageUrl;
         $scope.originalUser = angular.copy($scope.addUser);
         $scope.addUser = angular.copy($scope.addUser);
@@ -473,10 +474,12 @@ angular
             });
         url.then(
           function (response) {
-            console.log(action);
             if (action == "close") {
-              $scope.closeModal();
+              $scope.changeSaveContinue();
             } else if (action == "addNew") {
+              $scope.imageUrl = "images/no-image-available.webp";
+              $scope.states = [];
+              $scope.cities = [];
               $scope.addUser = {
                 Gender: "Male",
                 MaritalStatus: false,

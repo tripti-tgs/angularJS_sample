@@ -1,5 +1,5 @@
 angular.module('myApp')
-  .constant('BASE_API_URL', window.__env.BASE_API_URL) // your base URL
+  .constant('BASE_API_URL', window.__env.BASE_API_URL) 
   .service('BaseApiService', ['$http', 'BASE_API_URL', function ($http, BASE_API_URL) {
     this.get = function (url, config) {
       return $http.get(BASE_API_URL + url, config);

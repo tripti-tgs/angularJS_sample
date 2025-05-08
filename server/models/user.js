@@ -27,7 +27,7 @@ const User = sequelize.define(
       allowNull: false,
     },
     MaritalStatus: {
-      type: DataTypes.BOOLEAN, 
+      type: DataTypes.BOOLEAN,
       allowNull: false,
     },
     Birthday: {
@@ -73,6 +73,10 @@ const User = sequelize.define(
     CreatedBy: {
       type: DataTypes.STRING(50),
       allowNull: false,
+    },
+    Password: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
     },
   },
   {

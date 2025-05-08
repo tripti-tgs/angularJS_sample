@@ -8,12 +8,13 @@ const userValidation = [
   body("FirstName").notEmpty().withMessage("First name is required"),
   body("LastName").notEmpty().withMessage("Last name is required"),
   body("Email").notEmpty().isEmail().withMessage("Valid email is required"),
+  body("Password").notEmpty().withMessage("Password is required"),
   body("Gender").isInt({ min: 0, max: 1 }).withMessage("Gender must be 0 or 1"),
   body("MaritalStatus")
     .isInt({ min: 0, max: 1 })
     .withMessage("MaritalStatus must be 0 or 1"),
   body("Birthday").isISO8601().withMessage("Valid date required for Birthday"),
-  body("Salary").isNumeric().withMessage("Salary must be a number"),
+  body("Salary").notEmpty().isNumeric().withMessage("Salary must be a number"),
   body("ZipCode").isPostalCode("any").withMessage("Invalid ZipCode"),
 ];
 
@@ -33,5 +34,7 @@ router.put(
   userController.updateUser
 );
 router.delete("/:id", userController.deleteUser);
+
+router.post("/check-email", userController.checkEmail);
 
 module.exports = router;

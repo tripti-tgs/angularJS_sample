@@ -1,24 +1,64 @@
 <div ng-app="myApp" ng-controller="HomeController">
-  <!-- Alert Message -->
+  <!-- Toast Container (Top Right) -->
   <div
-    class="alert show"
-    ng-class="messageAlert.message ? 'alert-success' : 'alert-danger'"
-    ng-if="messageAlert"
-    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    class="position-fixed top-0 end-0 p-3"
+    style="z-index: 1080"
   >
-    {{ messageAlert.message || messageAlert.error }}
+    <div
+      class="toast align-items-center text-white"
+      ng-class="{
+         'bg-success': messageAlert && messageAlert.message,
+         'bg-danger': messageAlert && messageAlert.error,
+         'show': showToast
+       }"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      ng-if="messageAlert"
+    >
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ messageAlert.message || messageAlert.error }}
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          ng-click="hideToast()"
+        ></button>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Left Side: Add User Button -->
+    <button ng-click="handleAddUser()" class="btn btn-primary">Add User</button>
+
+    <!-- Right Side: Gender Filter -->
+    <div>
+      <select
+        class="form-select"
+        ng-model="selectedGender"
+        ng-change="filterByGender()"
+      >
+        <option value="">All</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
   </div>
 
-  <button ng-click="handleAddUser()" class="btn btn-primary mb-2">
-    Add user
-  </button>
-
-  <div ui-grid="gridOptions" ui-grid-pagination class="grid" hight="auto"></div>
+  <div
+    ui-grid="gridOptions"
+    ui-grid-pagination
+    class="grid"
+    height="auto"
+  ></div>
 
   <!-- Modal Backdrop -->
   <div class="modal-backdrop" ng-if="formModel"></div>
 
-  <!-- Bootstrap Styled Modal -->
+  <!-- Edit/add Bootstrap Styled Modal -->
 
   <div
     class="modal show d-block"
@@ -43,340 +83,519 @@
         </div>
 
         <!-- Modal Body -->
-        <div class="modal-body p-4">
-          <form name="userForm" ng-submit="saveUser()">
-            <div class="row g-3">
-              <!-- First Name -->
-              <div
-                class="col-md-6"
-                ng-class="{'has-error': userForm.FirstName.$touched && userForm.FirstName.$invalid}"
-              >
-                <label class="form-label">
-                  First Name <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="FirstName"
-                  ng-model="addUser.FirstName"
-                  required
-                  ng-maxlength="50"
-                  ng-class="{
-      'is-invalid': userForm.FirstName.$touched && userForm.FirstName.$invalid,
-      'is-valid': userForm.FirstName.$touched && userForm.FirstName.$valid
-    }"
-                />
-                <div
-                  class="text-danger"
-                  ng-if="userForm.FirstName.$touched && userForm.FirstName.$error.required"
-                >
-                  First Name is required.
-                </div>
-                <div
-                  class="text-danger"
-                  ng-if="userForm.FirstName.$touched && userForm.FirstName.$error.maxlength"
-                >
-                  First Name must be less than or equal to 50 characters.
-                </div>
-              </div>
-
-              <!-- Last Name -->
-              <div
-                class="col-md-6"
-                ng-class="{'has-error': userForm.LastName.$touched && userForm.LastName.$invalid}"
-              >
-                <label class="form-label">
-                  Last Name <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="LastName"
-                  ng-model="addUser.LastName"
-                  required
-                  ng-maxlength="50"
-                  ng-class="{
-      'is-invalid': userForm.LastName.$touched && userForm.LastName.$invalid,
-      'is-valid': userForm.LastName.$touched && userForm.LastName.$valid
-    }"
-                />
-                <div
-                  class="text-danger"
-                  ng-if="userForm.LastName.$touched && userForm.LastName.$error.required"
-                >
-                  Last Name is required.
-                </div>
-                <div
-                  class="text-danger"
-                  ng-if="userForm.LastName.$touched && userForm.LastName.$error.maxlength"
-                >
-                  Last Name must be less than or equal to 50 characters.
-                </div>
-              </div>
-
-              <!-- Email -->
-              <div class="col-md-6">
-                <label class="form-label">
-                  Email <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="email"
-                  class="form-control"
-                  ng-model="addUser.Email"
-                  name="Email"
-                  required
-                  ng-maxlength="50"
-                  ng-disabled="!addnewUser"
-                  ng-required="true"
-                  ng-class="{
-                    'is-invalid': userForm.Email.$touched && userForm.Email.$invalid,
-                    'is-valid': userForm.Email.$touched && userForm.Email.$valid
-                  }"
-                />
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Email.$touched && userForm.Email.$error.required"
-                >
-                  Email is required.
-                </div>
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Email.$touched && userForm.Email.$error.email"
-                >
-                  Please enter a valid email.
-                </div>
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Email.$touched && userForm.Email.$error.maxlength"
-                >
-                  Email must be less than or equal to 50 characters.
-                </div>
-              </div>
-
-              <!-- Birthday -->
-              <div
-                class="col-md-6"
-                ng-class="{'has-error': userForm.Birthday.$touched && userForm.Birthday.$invalid}"
-              >
-                <label class="form-label">
-                  Birthday <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="date"
-                  class="form-control"
-                  name="Birthday"
-                  ng-model="addUser.Birthday"
-                  ng-change="checkAge()"
-                  max="{{ today | date:'yyyy-MM-dd' }}"
-                  required
-                  ng-class="{
-                    'is-invalid': userForm.Birthday.$touched && (userForm.Birthday.$invalid || isUnder18),
-                    'is-valid': userForm.Birthday.$touched && userForm.Birthday.$valid && !isUnder18
-                  }"
-                />
-                <!-- Required validation -->
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Birthday.$touched && userForm.Birthday.$error.required"
-                >
-                  Birthday is required.
-                </div>
-                <!-- Age check validation -->
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Birthday.$touched && isUnder18 && addUser.Birthday"
-                >
-                  You must be at least 18 years old.
-                </div>
-              </div>
-
-              <!-- Gender -->
-              <div class="col-md-6">
-                <label class="form-label d-block">Gender</label>
-                <div class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="gender"
-                    ng-model="addUser.Gender"
-                    value="Male"
-                  />
-                  <label class="form-check-label">Male</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="gender"
-                    ng-model="addUser.Gender"
-                    value="Female"
-                  />
-                  <label class="form-check-label">Female</label>
-                </div>
-              </div>
-              <!-- Marital Status -->
-              <div class="col-md-6 mt-4">
-                <div class="form-check">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    ng-model="addUser.MaritalStatus"
-                    name="MaritalStatus"
-                  />
-                  <label class="form-check-label">Are you married?</label>
-                </div>
-              </div>
-              <!-- Salary -->
-              <div
-                class="col-md-6"
-                ng-class="{'has-error': userForm.Salary.$touched && userForm.Salary.$invalid}"
-              >
-                <label class="form-label">Salary</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  class="form-control"
-                  ng-model="addUser.Salary"
-                  name="Salary"
-                  min="5000"
-                  ng-pattern="/^\d+(\.\d{1,2})?$/"
-                  ng-class="{
-                  'is-invalid': userForm.Salary.$touched && userForm.Salary.$invalid,
-                  'is-valid': userForm.Salary.$touched && userForm.Salary.$valid
-                }"
-                />
-
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Salary.$error.min && userForm.Salary.$touched"
-                >
-                  Salary must be greater than 5000.
-                </div>
-
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Salary.$error.pattern && userForm.Salary.$touched"
-                >
-                  Salary must be a valid number with up to 2 decimal places.
-                </div>
-              </div>
-
+        <div class="modal-body mx-4">
+          <form name="userForm" novalidate>
+            <div class="d-flex mb-2 gap-4">
               <!-- Photo Upload -->
-              <img
-                ng-if="imageUrl"
-                ng-src="{{imageUrl}}"
-                width="100"
-                height="200"
-                alt="Preview"
-              />
-              <div class="col-md-6">
-                <label class="form-label">Photo</label>
-                <input
-                  type="file"
-                  class="form-control"
-                  ng-model="addUser.Photo"
-                  ngf-select="uploadImage($file)"
-                  accept="image/*"
-                />
-              </div>
-              <!-- Hobbies -->
-              <div class="col-md-6">
-                <label class="form-label">Hobbies</label>
-                <select
-                  class="form-control"
-                  ng-model="addUser.Hobbies"
-                  multiple
-                >
-                  <option value="Reading">Reading</option>
-                  <option value="Singing">Singing</option>
-                  <option value="Surfing">Surfing</option>
-                </select>
-              </div>
-              <!-- Address -->
+              <div class="text-center col-md-6">
+                <div class="text-center">
+                  <img
+                    ng-src="{{ imageUrl }}"
+                    class="user-photo mb-3"
+                    alt="User Photo"
+                  />
 
-              <div
-                class="col-md-6"
-                ng-class="{'has-error': userForm.Address.$touched && userForm.Address.$invalid}"
-              >
-                <label class="form-label">Address</label>
-                <textarea
-                  class="form-control"
-                  ng-model="addUser.Address"
-                  rows="4"
-                  ng-maxlength="500"
-                  name="Address"
-                  ng-class="{
-                      'is-invalid': userForm.Address.$touched && userForm.Address.$invalid,
-                      'is-valid': userForm.Address.$touched && !userForm.Address.$invalid
-                    }"
-                ></textarea>
-                <div
-                  class="text-danger"
-                  ng-if="userForm.Address.$touched && userForm.Address.$error.maxlength"
-                >
-                  Address must be less than or equal to 500 characters.
+                  <input
+                    type="file"
+                    class="form-control"
+                    ngf-select="uploadImage($file)"
+                    accept="image/*"
+                  />
                 </div>
               </div>
-
-              <!-- Country -->
-              <div class="col-md-4 mt-2">
-                <label class="form-label">Country</label>
-                <select
-                  class="form-select"
-                  ng-model="addUser.Country"
-                  ng-change="CountryChanged(addUser.Country)"
-                  ng-options="country.id as country.name for country in countries"
-                >
-                  <option value="">Select Country</option>
-                </select>
-              </div>
-
-              <!-- State -->
-              <div class="col-md-4 mt-2">
-                <label class="form-label">State</label>
-                <select
-                  class="form-select"
-                  ng-model="addUser.State"
-                  ng-change="StateChanged(addUser.State)"
-                  ng-options="state.id as state.name for state in states"
-                >
-                  <option value="">Select State</option>
-                </select>
-              </div>
-
-              <!-- City -->
-              <div class="col-md-4 mt-2">
-                <label class="form-label">City</label>
-                <select
-                  class="form-select"
-                  ng-model="addUser.City"
-                  ng-options="City.id as City.name for City in cities"
-                >
-                  <option value="">Select City</option>
-                </select>
-              </div>
-              <!-- Zip Code -->
-              <div class="col-md-6">
-                <label class="form-label">Zip Code</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="ZipCode"
-                  ng-model="addUser.ZipCode"
-                  ng-pattern="/^\d{6}$/"
-                />
+              <div class="col-md-6 mt-2">
+                <!-- First Name -->
                 <div
-                  class="text-danger"
-                  ng-if="userForm.ZipCode.$invalid && userForm.ZipCode.$touched"
+                  class="mb-3 row align-items-center"
+                  ng-class="{'has-error': userForm.FirstName.$touched && userForm.FirstName.$invalid}"
                 >
-                  Zip Code must be exactly 6 digits.
+                  <label class="col-sm-4 col-form-label form_space"
+                    >First Name :<span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-8 w-75">
+                    <input
+                      type="text"
+                      class="form-control "
+                      name="FirstName"
+                      ng-model="addUser.FirstName"
+                      ng-maxlength="50"
+                      ng-required="true"
+                      ng-class="{
+                      'is-invalid': userForm.FirstName.$touched && userForm.FirstName.$invalid
+                    }"
+                    />
+                    <samll
+                      class="text-danger"
+                      ng-if="userForm.FirstName.$touched && userForm.FirstName.$error.required"
+                    >
+                      First Name is required.
+                    </samll>
+                    <samll
+                      class="text-danger"
+                      ng-if="userForm.FirstName.$touched && userForm.FirstName.$error.maxlength"
+                    >
+                      First Name must be less than or equal to 50 characters.
+                    </samll>
+                  </div>
+                </div>
+
+                <!-- Last Name -->
+                <div
+                  class="mb-3 row align-items-center"
+                  ng-class="{'has-error': userForm.LastName.$touched && userForm.LastName.$invalid}"
+                >
+                  <label class="col-sm-4 col-form-label form_space"
+                    >Last Name: <span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-8 w-75">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="LastName"
+                      ng-model="addUser.LastName"
+                      ng-required="true"
+                      ng-maxlength="50"
+                      ng-class="{
+                      'is-invalid': userForm.LastName.$touched && userForm.LastName.$invalid
+                    }"
+                    />
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.LastName.$touched && userForm.LastName.$error.required"
+                    >
+                      Last Name is required.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.LastName.$touched && userForm.LastName.$error.maxlength"
+                    >
+                      Last Name must be less than or equal to 50 characters.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3 row align-items-center">
+                  <label class="col-sm-4 col-form-label form_space"
+                    >Email: <span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-8 w-75">
+                    <input
+                      type="email"
+                      class="form-control"
+                      ng-model="addUser.Email"
+                      name="Email"
+                      ng-maxlength="50"
+                      ng-disabled="!addnewUser"
+                      ng-blur="checkEmail(addUser.Email)"
+                      ng-required="true"
+                      ng-class="{
+                      'is-invalid': userForm.Email.$touched && userForm.Email.$invalid
+                    }"
+                    />
+                    <small class="text-danger" ng-if="emailMsgExists">
+                      The email you entered is already in use.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Email.$touched && userForm.Email.$error.required"
+                    >
+                      Email is required.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Email.$touched && userForm.Email.$error.email"
+                    >
+                      Please enter a valid email.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Email.$touched && userForm.Email.$error.maxlength"
+                    >
+                      Email must be less than or equal to 50 characters.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3 row align-items-center">
+                  <label class="col-sm-4 col-form-label form_space"
+                    >Password: <span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-8 w-75">
+                    <div class="input-group">
+                      <input
+                        type="{{ passwordVisible ? 'text' : 'password' }}"
+                        class="form-control"
+                        ng-model="addUser.Password"
+                        name="Password"
+                        ng-required="true"
+                        ng-minlength="8"
+                        ng-maxlength="16"
+                        ng-pattern="/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/"
+                        ng-class="{
+                        'is-invalid': userForm.Password.$touched && userForm.Password.$invalid
+                      }"
+                      />
+                      <!-- Toggle visibility button -->
+                      <div class="input-group-append">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          ng-click="togglePasswordVisibility()"
+                        >
+                          <span ng-if="passwordVisible">Hide</span>
+                          <span ng-if="!passwordVisible">Show</span>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Validation Messages -->
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Password.$touched && userForm.Password.$error.required"
+                    >
+                      Password is required.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Password.$touched && userForm.Password.$error.minlength"
+                    >
+                      Password must be at least 8 characters long.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Password.$touched && userForm.Password.$error.maxlength"
+                    >
+                      Password must be less than or equal to 16 characters.
+                    </small>
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Password.$touched && userForm.Password.$error.pattern"
+                    >
+                      Password must contain at least 1 uppercase letter, 1
+                      special character, and 1 number.
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
-            <!-- ng-disabled="userForm.$invalid" -->
+            <hr />
+            <div class="d-flex gap-4 mb-2">
+              <!-- Birthday -->
+              <div class="col-md-6">
+                <div
+                  class="row align-items-center"
+                  ng-class="{'has-error': userForm.Birthday.$touched && userForm.Birthday.$invalid}"
+                >
+                  <label class="col-sm-4 col-form-label"
+                    >Birthday: <span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-8">
+                    <input
+                      type="date"
+                      class="form-control"
+                      name="Birthday"
+                      ng-model="addUser.Birthday"
+                      ng-change="checkAge()"
+                      ng-required="true"
+                      max="{{ today | date:'yyyy-MM-dd' }}"
+                      ng-class="{
+                      'is-invalid': userForm.Birthday.$touched && (userForm.Birthday.$invalid || isUnder18)
+                    }"
+                    />
+                    <!-- Required validation -->
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Birthday.$touched && userForm.Birthday.$error.required"
+                    >
+                      Birthday is required.
+                    </small>
+                    <!-- Age check validation -->
+                    <small
+                      class="text-danger"
+                      ng-if="userForm.Birthday.$touched && isUnder18 && addUser.Birthday"
+                    >
+                      You must be at least 18 years old.
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!-- Salary -->
+              <div class="col-md-6">
+                <div
+                  class="row g-0 align-items-center"
+                  ng-class="{'has-error': userForm.Salary.$touched && userForm.Salary.$invalid}"
+                >
+                  <label class="col-sm-3 col-form-label"
+                    >Salary: <span class="text-danger">*</span></label
+                  >
+                  <div class="col-sm-9">
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control"
+                      ng-model="addUser.Salary"
+                      name="Salary"
+                      min="5000"
+                      ng-required="true"
+                      ng-pattern="/^\d+(\.\d{1,2})?$/"
+                      ng-class="{
+                      'is-invalid': userForm.Salary.$touched && userForm.Salary.$invalid
+                    }"
+                    />
+                    <div
+                      class="text-danger"
+                      ng-if="userForm.Salary.$touched && userForm.Salary.$error.required"
+                    >
+                      Salary is required.
+                    </div>
+                    <div
+                      class="text-danger"
+                      ng-if="userForm.Salary.$error.min && userForm.Salary.$touched"
+                    >
+                      Salary must be greater than 5000.
+                    </div>
+                    <div
+                      class="text-danger"
+                      ng-if="userForm.Salary.$error.pattern && userForm.Salary.$touched"
+                    >
+                      Salary must be a valid number with up to 2 decimal places.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-4 mb-2">
+              <!-- Gender -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label form_space"
+                    >Gender:</label
+                  >
+                  <div class="col-sm-8">
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="gender"
+                        ng-model="addUser.Gender"
+                        value="Male"
+                        id="Malebox"
+                      />
+                      <label class="form-check-label" for="Malebox">Male</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="gender"
+                        ng-model="addUser.Gender"
+                        value="Female"
+                        id="Femalebox"
+                      />
+                      <label class="form-check-label" for="Femalebox"
+                        >Female</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Marital Status -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <div class="col-sm-8">
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        ng-model="addUser.MaritalStatus"
+                        name="MaritalStatus"
+                        id="MaritalStatusCheckbox"
+                      />
+                      <label
+                        class="form-check-label"
+                        for="MaritalStatusCheckbox"
+                        >Are you married?</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-4 mb-2">
+              <!-- Hobbies -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label"
+                    >Hobbies:</label
+                  >
+                  <div class="col-sm-8 mt-1">
+                    <select
+                      class="form-control p-1.5"
+                      ng-model="addUser.Hobbies"
+                      multiple
+                    >
+                      <option value="Reading">Reading</option>
+                      <option value="Singing">Singing</option>
+                      <option value="Surfing">Surfing</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <!-- Address -->
+              <div class="col-md-6">
+                <div
+                  class="row align-items-center"
+                  ng-class="{'has-error': userForm.Address.$touched && userForm.Address.$invalid}"
+                >
+                  <label class="col-sm-4 col-form-label"
+                    >Address:</label
+                  >
+                  <div class="col-sm-8">
+                    <textarea
+                      class="form-control"
+                      ng-model="addUser.Address"
+                      rows="4"
+                      ng-maxlength="500"
+                      name="Address"
+                      ng-class="{
+                      'is-invalid': userForm.Address.$touched && userForm.Address.$invalid
+                    }"
+                    ></textarea>
+                    <div
+                      class="text-danger"
+                      ng-if="userForm.Address.$touched && userForm.Address.$error.maxlength"
+                    >
+                      Address must be less than or equal to 500 characters.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-4 mb-2">
+              <!-- Country -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label"
+                    >Country:</label
+                  >
+                  <div class="col-sm-8">
+                    <select
+                      class="form-select"
+                      ng-model="addUser.Country"
+                      ng-change="CountryChanged(addUser.Country)"
+                      ng-options="country.id as country.name for country in countries"
+                    >
+                      <option value="">Select Country</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- State -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label "
+                    >State:</label
+                  >
+                  <div class="col-sm-8">
+                    <select
+                      class="form-select"
+                      ng-model="addUser.State"
+                      ng-change="StateChanged(addUser.State)"
+                      ng-options="state.id as state.name for state in states"
+                      ng-disabled="!states || states.length === 0"
+                    >
+                      <option value="">Select State</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-4 mb-2">
+              <!-- City -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label">City:</label>
+                  <div class="col-sm-8">
+                    <select
+                      class="form-select"
+                      ng-model="addUser.City"
+                      ng-options="City.id as City.name for City in cities"
+                      ng-disabled="!cities || cities.length === 0"
+                    >
+                      <option value="">Select City</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <!-- Zip Code -->
+              <div class="col-md-6">
+                <div class="row align-items-center">
+                  <label class="col-sm-4 col-form-label"
+                    >Zip Code:</label
+                  >
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="ZipCode"
+                      ng-model="addUser.ZipCode"
+                      ng-pattern="/^\d{6}$/"
+                    />
+                    <div
+                      class="text-danger"
+                      ng-if="userForm.ZipCode.$invalid && userForm.ZipCode.$touched"
+                    >
+                      Zip Code must be exactly 6 digits.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Footer -->
             <div class="modal-footer mt-4">
-              <button type="submit" class="btn btn-success">Save</button>
+              <!-- Show these two buttons if addnewUser is true -->
+              <div ng-if="addnewUser">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  ng-click="saveUser('close')"
+                  ng-disabled="userForm.$invalid"
+                >
+                  Save & close
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  ng-click="saveUser('addNew')"
+                  ng-disabled="userForm.$invalid"
+                >
+                  Save & Add new
+                </button>
+              </div>
+
+              <!-- Show this button if addnewUser is false -->
+              <div ng-if="!addnewUser">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  ng-click="saveUser('close')"
+                  ng-disabled="userForm.$invalid"
+                >
+                  Save
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  ng-click="restModel()"
+                >
+                  Rest
+                </button>
+              </div>
               <button
                 type="button"
                 class="btn btn-secondary"
@@ -391,6 +610,32 @@
     </div>
   </div>
 
+  <!-- Changes in form modal -->
+  <div class="custom-modal-overlay" ng-if="changeSaveExists">
+    <div class="custom-modal-content text-center">
+      <p class="mb-3">
+        You have unsaved changes in the form. Do you want to save them or
+        continue without saving?
+      </p>
+      <button class="btn btn-primary" ng-click="changeSaveContinue()">
+        Continue Without Saving
+      </button>
+      <button class="btn btn-secondary" ng-click="changeSaveClose()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Email model -->
+  <div class="custom-modal-overlay" ng-if="emailExists">
+    <div class="custom-modal-content text-center">
+      <p class="mb-3">
+        The email you entered is already in use. Please choose another one.
+      </p>
+      <button class="btn btn-secondary" ng-click="closeEmailModal()">OK</button>
+    </div>
+  </div>
+
   <!-- Modal Wrapper -->
   <div class="modal-backdrop" ng-if="viewModel"></div>
   <div class="custom-modal" ng-if="viewModel">
@@ -398,7 +643,11 @@
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title">User Details</h4>
-        <button type="button" ng-click="closeModal()" class="close-btn">
+        <button
+          type="button"
+          ng-click="closeModalUserDetails()"
+          class="close-btn"
+        >
           ×
         </button>
       </div>

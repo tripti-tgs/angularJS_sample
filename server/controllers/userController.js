@@ -10,9 +10,20 @@ exports.getAllUsers = async (req, res) => {
     const pageSize = parseInt(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
     const CreatedBy = req.query.createdBy || "System";
+    let gender = req.query.gender;
+    const whereClause = { CreatedBy }; // base filter
+
+    // Apply gender filter only if it exists
+    if (gender !== undefined) {
+      if (gender.toLowerCase() === "female") {
+        whereClause.Gender = 1;
+      } else if (gender.toLowerCase() === "male") {
+        whereClause.Gender = 0;
+      }
+    }
 
     const { count: totalRecords, rows: data } = await User.findAndCountAll({
-      where: { CreatedBy },
+      where: whereClause,
       offset,
       limit: pageSize,
     });
@@ -55,6 +66,7 @@ exports.createUser = async (req, res) => {
       Hobbies,
       Salary,
       Address,
+      Password,
       Country,
       State,
       City,
@@ -105,6 +117,7 @@ exports.createUser = async (req, res) => {
       Address,
       Country,
       State,
+      Password,
       City,
       ZipCode,
       CreateDate: new Date(),
@@ -135,6 +148,7 @@ exports.updateUser = async (req, res) => {
       Salary,
       Address,
       Country,
+      Password,
       State,
       City,
       ZipCode,
@@ -176,6 +190,7 @@ exports.updateUser = async (req, res) => {
       Photo,
       Salary,
       Address,
+      Password,
       Country,
       State,
       City,
@@ -197,5 +212,32 @@ exports.deleteUser = async (req, res) => {
     res.json({ message: "User deleted successfully!" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete user", details: err });
+  }
+};
+
+exports.checkEmail = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Invalid email format." });
+    }
+
+    const existing = await User.findOne({ where: { email } });
+
+    if (existing) {
+      return res
+        .status(200)
+        .json({ exists: true, message: "Email already exists." });
+    } else {
+      return res
+        .status(200)
+        .json({ exists: false, message: "Email is available." });
+    }
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error while checking email." });
   }
 };
